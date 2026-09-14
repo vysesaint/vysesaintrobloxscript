@@ -1,11 +1,8 @@
 -- ============================================================
--- VYSESAINT — FULL SCRIPT (Fixed Toggle Glitch)
--- Game: Fluxo PVP (multi-place support)
+-- VYSESAINT — FULL SCRIPT
+-- Game: Fluxo PVP
 -- ============================================================
 
--- ============================================================
--- LOCK CHECKS
--- ============================================================
 local ALLOWED_PLACE_IDS = {
     [99001115434148] = true,
     [83590755974448] = true,
@@ -13,7 +10,6 @@ local ALLOWED_PLACE_IDS = {
 }
 
 local TARGET_GAME_NAME = "Fluxo PVP"
-local CHEAT_BUILD_VERSION = "1.0.0"
 local LOCKED_ROBLOX_VERSION = "version-c5aecda2245e4fae"
 
 local function LockedPopup(title, message, color, blocking)
@@ -147,9 +143,6 @@ if getgenv().VYSESAINT_LOCK then
     return
 end
 
--- ============================================================
--- SERVICES
--- ============================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -164,17 +157,16 @@ local Camera = Workspace.CurrentCamera
 local HOOK_KEY = "_" .. tostring(math.random(100000, 999999)) .. tostring(os.time()):reverse():sub(1,6)
 
 local Theme = {
-    Primary      = Color3.fromRGB(255, 20, 40),
-    PrimaryDark  = Color3.fromRGB(120, 0, 15),
-    PrimaryGlow  = Color3.fromRGB(255, 60, 80),
-    Background   = Color3.fromRGB(8, 0, 2),
-    Panel        = Color3.fromRGB(18, 2, 8),
-    PanelLight   = Color3.fromRGB(28, 4, 12),
-    Text         = Color3.fromRGB(240, 220, 225),
-    TextDim      = Color3.fromRGB(160, 120, 130),
-    Success      = Color3.fromRGB(0, 220, 90),
-    Danger       = Color3.fromRGB(255, 30, 60),
-    Warning      = Color3.fromRGB(255, 180, 0),
+    Primary = Color3.fromRGB(255, 20, 40),
+    PrimaryGlow = Color3.fromRGB(255, 60, 80),
+    Background = Color3.fromRGB(8, 0, 2),
+    Panel = Color3.fromRGB(18, 2, 8),
+    PanelLight = Color3.fromRGB(28, 4, 12),
+    Text = Color3.fromRGB(240, 220, 225),
+    TextDim = Color3.fromRGB(160, 120, 130),
+    Success = Color3.fromRGB(0, 220, 90),
+    Danger = Color3.fromRGB(255, 30, 60),
+    Warning = Color3.fromRGB(255, 180, 0),
 }
 
 local Config = {
@@ -194,31 +186,19 @@ local function GetMouseViewportPos()
     return Vector2.new(loc.X, loc.Y)
 end
 
--- ============================================================
--- WHITELIST (live reference)
--- ============================================================
 local Whitelist = {}
-
-if getgenv then
-    getgenv()._VYSE_WHITELIST = Whitelist
-end
+if getgenv then getgenv()._VYSE_WHITELIST = Whitelist end
 
 local function GetWhitelist()
-    if getgenv and getgenv()._VYSE_WHITELIST then
-        return getgenv()._VYSE_WHITELIST
-    end
+    if getgenv and getgenv()._VYSE_WHITELIST then return getgenv()._VYSE_WHITELIST end
     return Whitelist
 end
 
 local function IsWhitelisted(plr)
     if not plr then return false end
-    local uname = string.lower(plr.Name)
-    return GetWhitelist()[uname] == true
+    return GetWhitelist()[string.lower(plr.Name)] == true
 end
 
--- ============================================================
--- GUI
--- ============================================================
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "VYSESAINT_" .. tostring(math.random(100000, 999999))
 ScreenGui.ResetOnSpawn = false
@@ -266,15 +246,6 @@ GlowStroke.Color = Theme.Primary
 GlowStroke.Thickness = 3
 GlowStroke.Transparency = 0.5
 GlowStroke.Parent = GlowFrame
-
-local Scanline = Instance.new("Frame")
-Scanline.Size = UDim2.new(1, 0, 0, 2)
-Scanline.Position = UDim2.new(0, 0, 0, 0)
-Scanline.BackgroundColor3 = Theme.PrimaryGlow
-Scanline.BackgroundTransparency = 0.6
-Scanline.BorderSizePixel = 0
-Scanline.ZIndex = 5
-Scanline.Parent = MainFrame
 
 local TitleBar = Instance.new("Frame")
 TitleBar.Name = "TitleBar"
@@ -411,9 +382,6 @@ AddHover(InfoBtn, Theme.PanelLight, Color3.fromRGB(45, 10, 20), InfoStroke)
 AddHover(MinimizeBtn, Theme.PanelLight, Color3.fromRGB(45, 20, 10), MinStroke)
 AddHover(ExitBtn, Theme.PanelLight, Color3.fromRGB(60, 5, 15), ExitStroke)
 
--- ============================================================
--- INFO POPUP
--- ============================================================
 local InfoGui = Instance.new("Frame")
 InfoGui.Size = UDim2.new(0, 0, 0, 0)
 InfoGui.Position = UDim2.new(0.5, -260, 0.5, -260)
@@ -584,9 +552,6 @@ InfoClose.MouseButton1Click:Connect(function()
     InfoGui.Visible = false
 end)
 
--- ============================================================
--- CONTENT
--- ============================================================
 local ScrollFrame = Instance.new("ScrollingFrame")
 ScrollFrame.Name = "Content"
 ScrollFrame.Size = UDim2.new(1, -20, 1, -58)
@@ -903,9 +868,6 @@ local function CreateDropdown(name, options, default, callback)
     return DropFrame, ValueBtn
 end
 
--- ============================================================
--- BUILD MENU
--- ============================================================
 CreateSectionLabel("ESP")
 CreateToggle("ESP Enabled", Config.ESPEnabled, function(s) Config.ESPEnabled = s end)
 CreateToggle("ESP Box", Config.ESPBox, function(s) Config.ESPBox = s end)
@@ -938,9 +900,6 @@ CreateToggle("Wall Check", Config.SilentWallCheck, function(s) Config.SilentWall
 CreateSectionLabel("FOV ALWAYS ON")
 CreateEditableSlider("FOV Size", 10, 500, Config.FOV, "", function(v) Config.FOV = v end)
 
--- ============================================================
--- WHITELIST SECTION — TEAMMATE PICK
--- ============================================================
 CreateSectionLabel("WHITELIST — TEAMMATE PICK")
 
 local HeaderRow = Instance.new("Frame")
@@ -1181,7 +1140,6 @@ local function RefreshPlayerList()
         pcall(function() state.row:Destroy() end)
     end
     PlayerRows = {}
-
     for _, plr in ipairs(Players:GetPlayers()) do
         if plr ~= LocalPlayer then
             CreatePlayerRow(plr)
@@ -1209,7 +1167,6 @@ end
 
 SearchBox:GetPropertyChangedSignal("Text"):Connect(ApplySearchFilter)
 
--- confirm popup for clear all
 local ConfirmGui = Instance.new("Frame")
 ConfirmGui.Size = UDim2.new(0, 0, 0, 0)
 ConfirmGui.Position = UDim2.new(0.5, -140, 0.5, -75)
@@ -1381,9 +1338,6 @@ ContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, ContentLayout.AbsoluteContentSize.Y + 12)
 end)
 
--- ============================================================
--- ANIMATIONS
--- ============================================================
 MainFrame.Size = UDim2.new(0, 0, 0, 0)
 task.spawn(function()
     TweenService:Create(MainFrame, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
@@ -1408,16 +1362,6 @@ end)
 
 task.spawn(function()
     while MainFrame.Parent do
-        Scanline.Position = UDim2.new(0, 0, 0, 0)
-        TweenService:Create(Scanline, TweenInfo.new(2.5, Enum.EasingStyle.Linear), {
-            Position = UDim2.new(0, 0, 1, -2)
-        }):Play()
-        task.wait(2.8)
-    end
-end)
-
-task.spawn(function()
-    while MainFrame.Parent do
         TweenService:Create(TitleGlow, TweenInfo.new(1.2, Enum.EasingStyle.Sine), {TextTransparency = 0.4}):Play()
         task.wait(1.2)
         TweenService:Create(TitleGlow, TweenInfo.new(1.2, Enum.EasingStyle.Sine), {TextTransparency = 0.8}):Play()
@@ -1425,9 +1369,6 @@ task.spawn(function()
     end
 end)
 
--- ============================================================
--- FOV CIRCLE
--- ============================================================
 local FOVCircle = Drawing.new("Circle")
 FOVCircle.Visible = true
 FOVCircle.Radius = Config.FOV
@@ -1437,9 +1378,6 @@ FOVCircle.Transparency = 0.8
 FOVCircle.Filled = false
 FOVCircle.NumSides = 64
 
--- ============================================================
--- ESP DRAWINGS
--- ============================================================
 local ESPCache = {}
 local function CreateESP(player)
     if player == LocalPlayer then return end
@@ -1465,9 +1403,6 @@ Players.PlayerAdded:Connect(CreateESP)
 Players.PlayerRemoving:Connect(RemoveESP)
 for _, p in ipairs(Players:GetPlayers()) do CreateESP(p) end
 
--- ============================================================
--- HELPERS
--- ============================================================
 local function IsVisible(part)
     local origin = Camera.CFrame.Position
     local direction = (part.Position - origin)
@@ -1523,9 +1458,6 @@ local function GetClosestTarget(fovValue, wallCheck)
     return closest
 end
 
--- ============================================================
--- SILENT AIM — CASTER HOOK
--- ============================================================
 local Caster
 pcall(function() Caster = require(ReplicatedStorage.ZexisShared.Modules.Caster) end)
 local restoreCasterHook = function() end
@@ -1552,11 +1484,7 @@ if Caster then
     end
 end
 
--- ============================================================
--- RENDER LOOP
--- ============================================================
 local RenderConn
-
 local function DrawLoop()
     local mousePos = GetMouseViewportPos()
     FOVCircle.Position = mousePos
@@ -1619,9 +1547,6 @@ end
 
 RenderConn = RunService.RenderStepped:Connect(DrawLoop)
 
--- ============================================================
--- CLEANUP
--- ============================================================
 local cleanedUp = false
 local function PanicCleanup()
     if cleanedUp then return end
@@ -1640,7 +1565,7 @@ local function PanicCleanup()
         end
     end)
 
-    for player, drawings in pairs(ESPCache) do
+    for _, drawings in pairs(ESPCache) do
         for _, d in pairs(drawings) do
             pcall(function()
                 d.Visible = false
@@ -1659,9 +1584,6 @@ end
 LocalPlayer.CharacterRemoving:Connect(function() Config.SilentAimEnabled = false end)
 LocalPlayer.CharacterAdded:Connect(function() task.wait(0.5); Config.SilentAimEnabled = true end)
 
--- ============================================================
--- MINIMIZE (instant, no tween)
--- ============================================================
 MinimizeBtn.MouseButton1Click:Connect(function()
     if ScrollFrame.Visible then
         ScrollFrame.Visible = false
@@ -1678,9 +1600,6 @@ ExitBtn.MouseButton1Click:Connect(function()
     PanicCleanup()
 end)
 
--- ============================================================
--- KEYBINDS
--- ============================================================
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     if input.KeyCode == Enum.KeyCode.RightShift then
